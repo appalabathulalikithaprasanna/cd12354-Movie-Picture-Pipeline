@@ -1,6 +1,6 @@
- name: Backend Continuous Integration
+name: Backend Continuous Integration
 
-"on":
+on:
   pull_request:
     branches:
       - main
