@@ -8,8 +8,6 @@ RUN adduser --uid 1000 --disabled-password --gecos "" app
 
 RUN apt-get update && \
     apt-get install -y \
-    libpcre3 \
-    libpcre3-dev \
     build-essential \
     gcc \
     linux-libc-dev \
