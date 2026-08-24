@@ -1,11 +1,9 @@
-name: Frontend Quality Pipeline
+name: Frontend Continuous Integration
 
 on:
   pull_request:
     branches:
       - main
-    paths:
-      - starter/frontend/**
   workflow_dispatch:
 
 jobs:
@@ -55,8 +53,8 @@ jobs:
         working-directory: starter/frontend
         run: CI=true npm test -- --watchAll=false
 
-  container-build:
-    name: Create frontend container
+  build:
+    name: Build frontend application
     runs-on: ubuntu-latest
     needs:
       - code-check
@@ -66,12 +64,17 @@ jobs:
       - name: Get project source
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      - name: Prepare Node environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: starter/frontend/package-lock.json
+
+      - name: Install frontend packages
         working-directory: starter/frontend
-        env:
-          MOVIE_API_ENDPOINT: http://localhost:5000
-        run: |
-          docker build \
-            --build-arg REACT_APP_MOVIE_API_URL="$MOVIE_API_ENDPOINT" \
-            --tag "mp-frontend:${{ github.sha }}" \
-            .
+        run: npm ci
+
+      - name: Build frontend application
+        working-directory: starter/frontend
+        run: npm run build
